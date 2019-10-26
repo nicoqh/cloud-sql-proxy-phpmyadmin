@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+    database:
+        image: gcr.io/cloudsql-docker/gce-proxy:1.12
+        volumes:
+            - ${pwd}/<PATH_TO_KEYFILE>:/config
+        entrypoint:
+            - /cloud_sql_proxy
+            - -instances=<INSTANCE_CONNECTION_NAME>=tcp:0.0.0.0:3306
+            - -credential_file=/config
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        volumes:
+            - ${pwd}/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
+        ports:
+            - "8090:80"
+        environment:
+            - PMA_HOST=database
